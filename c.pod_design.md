@@ -173,7 +173,7 @@ kubectl describe po nginx1 | grep -i 'annotations'
 
 # or
 
-kubectl get pods -o custom-columns=Name:metadata.name,ANNOTATIONS:metadata.annotations.description
+kubectl get po nginx1 -o custom-columns=Name:metadata.name,ANNOTATIONS:metadata.annotations.description
 ```
 
 As an alternative to using `| grep` you can use jsonPath like `kubectl get po nginx1 -o jsonpath='{.metadata.annotations}{"\n"}'`
@@ -759,7 +759,7 @@ kubectl delete cj busybox
 kubectl create cronjob time-limited-job --image=busybox --restart=Never --dry-run=client --schedule="* * * * *" -o yaml -- /bin/sh -c 'date; echo Hello from the Kubernetes cluster' > time-limited-job.yaml
 vi time-limited-job.yaml
 ```
-Add cronjob.spec.startingDeadlineSeconds=17
+Add cronjob.spec.jobTemplate.spec.activeDeadlineSeconds=17
 
 ```bash
 apiVersion: batch/v1beta1
@@ -768,12 +768,12 @@ metadata:
   creationTimestamp: null
   name: time-limited-job
 spec:
-  startingDeadlineSeconds: 17 # add this line
   jobTemplate:
     metadata:
       creationTimestamp: null
       name: time-limited-job
     spec:
+      activeDeadlineSeconds: 17 # add this line
       template:
         metadata:
           creationTimestamp: null
